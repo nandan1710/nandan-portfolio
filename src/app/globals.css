@@ -1,0 +1,106 @@
+﻿@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #fafafa;
+  --foreground: #1c1c1c;
+  --surface: #ffffff;
+  --surface-muted: #f4f4f5;
+  --surface-border: #e4e4e7;
+  --surface-hover: #f1f5f9;
+  --accent-cyan: #0284c7;
+  --accent-mint: #0d9488;
+  --glow-color: rgba(2, 132, 199, 0.15);
+  --grid-color: rgba(0, 0, 0, 0.05);
+}
+
+.dark {
+  --background: #121316;
+  --foreground: #f4f4f5;
+  --surface: #1c1c1c;
+  --surface-muted: #24272e;
+  --surface-border: #2e3440;
+  --surface-hover: #292d36;
+  --accent-cyan: #aed9e0;
+  --accent-mint: #b8f2e6;
+  --glow-color: rgba(174, 217, 224, 0.15);
+  --grid-color: rgba(174, 217, 224, 0.04);
+}
+
+html {
+  scroll-behavior: smooth;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  overflow-x: hidden;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Custom sleek scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--background);
+}
+::-webkit-scrollbar-thumb {
+  background: #3b4252;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #5e6472;
+}
+
+/* Circuit grid texture */
+.circuit-grid {
+  background-image: 
+    linear-gradient(to right, var(--grid-color) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--grid-color) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+/* Hardware glow effects */
+.glow-cyan {
+  box-shadow: 0 0 25px -5px rgba(174, 217, 224, 0.3);
+}
+
+.glow-mint {
+  box-shadow: 0 0 25px -5px rgba(184, 242, 230, 0.3);
+}
+
+.glow-border {
+  border-color: rgba(174, 217, 224, 0.3);
+}
+
+/* Custom text selection */
+::selection {
+  background-color: #aed9e0;
+  color: #121316;
+}
+
+/* Monospace font for telemetry and registers */
+.font-tech {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  letter-spacing: -0.02em;
+}
+
+/* Glassmorphism surfaces */
+.glass-panel {
+  background: rgba(28, 28, 28, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(174, 217, 224, 0.15);
+}
+
+.light .glass-panel {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(228, 228, 231, 0.8);
+}
