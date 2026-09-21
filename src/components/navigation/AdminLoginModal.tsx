@@ -37,16 +37,16 @@ export const AdminLoginModal: React.FC<AdminLoginModalProps> = ({
 
   if (!isOpen) return null;
 
-  const handleSubmit = (event: React.FormEvent) => {
-    event.preventDefault();
+const handleSubmit = (event: React.FormEvent) => {
+  event.preventDefault();
 
-    // Authentication will be connected in the next step.
-    console.log("Admin login submitted", {
-      username,
-      password,
-    });
-  };
+  if (username === "NANDAN" && password === "12345") {
+    window.location.href = "/admin/dashboard";
+    return;
+  }
 
+  alert("Invalid username or password.");
+};
   return (
     <div
       className="fixed inset-0 z-[100] flex items-center justify-center px-4"
