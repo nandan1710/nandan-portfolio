@@ -1,101 +1,141 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getWordPressSite } from "@/lib/wordpress";
+import { getWordPressPosts } from "@/lib/wordpress";
+
+interface WordPressPost {
+  ID: number;
+  title: string;
+  URL: string;
+  date: string;
+  content: string;
+  excerpt: string;
+}
 
 export default function AdminDashboard() {
-  const [site, setSite] = useState<any>(null);
-  const [error, setError] = useState("");
+  const [posts, setPosts] = useState<WordPressPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    async function connectWordPress() {
+    async function loadPosts() {
       try {
-        const data = await getWordPressSite();
-        setSite(data);
+        const data = await getWordPressPosts();
+
+        setPosts(data.posts || []);
       } catch (err) {
         console.error(err);
-        setError("Could not connect to WordPress.");
+        setError("Failed to load WordPress content.");
       } finally {
         setLoading(false);
       }
     }
 
-    connectWordPress();
+    loadPosts();
   }, []);
 
   return (
-    <main className="min-h-screen bg-zinc-950 text-white p-10">
-      <div className="mx-auto max-w-3xl">
+    <main className="min-h-screen bg-zinc-950 text-white p-6 md:p-10">
 
-        <h1 className="text-3xl font-bold">
-          NANDAN CMS
-        </h1>
+      <div className="mx-auto max-w-6xl">
 
-        <p className="mt-2 text-zinc-400">
-          WordPress Headless CMS Connection
-        </p>
+        {/* Header */}
+        <div className="mb-10">
+          <p className="font-mono text-xs uppercase tracking-widest text-cyan-300">
+            NANDAN CMS
+          </p>
 
-        <div className="mt-8 rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+          <h1 className="mt-2 text-3xl font-bold">
+            WordPress Content
+          </h1>
 
-          {loading && (
-            <p className="text-cyan-300">
-              Connecting to WordPress...
-            </p>
-          )}
-
-          {error && (
-            <p className="text-red-400">
-              {error}
-            </p>
-          )}
-
-          {site && (
-            <div className="space-y-4">
-
-              <div className="flex items-center gap-2">
-                <span className="h-3 w-3 rounded-full bg-green-400" />
-                <span className="text-green-400 font-semibold">
-                  WordPress Connected
-                </span>
-              </div>
-
-              <div>
-                <p className="text-xs text-zinc-500">
-                  SITE NAME
-                </p>
-
-                <p className="text-lg">
-                  {site.name}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-zinc-500">
-                  SITE ID
-                </p>
-
-                <p className="text-lg">
-                  {site.ID}
-                </p>
-              </div>
-
-              <div>
-                <p className="text-xs text-zinc-500">
-                  WORDPRESS URL
-                </p>
-
-                <p className="text-cyan-300">
-                  {site.URL}
-                </p>
-              </div>
-
-            </div>
-          )}
-
+          <p className="mt-2 text-zinc-400">
+            Content currently stored in your WordPress CMS.
+          </p>
         </div>
 
+        {/* Loading */}
+        {loading && (
+          <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6">
+            <p className="text-cyan-300">
+              Loading WordPress content...
+            </p>
+          </div>
+        )}
+
+        {/* Error */}
+        {error && (
+          <div className="rounded-2xl border border-red-500/30 bg-red-500/10 p-6">
+            <p className="text-red-300">
+              {error}
+            </p>
+          </div>
+        )}
+
+        {/* Posts */}
+        {!loading && !error && (
+          <div className="space-y-5">
+
+            <div className="flex items-center justify-between">
+              <h2 className="text-xl font-semibold">
+                WordPress Posts
+              </h2>
+
+              <span className="rounded-full bg-cyan-400/10 px-3 py-1 text-xs text-cyan-300">
+                {posts.length} posts
+              </span>
+            </div>
+
+            {posts.length === 0 ? (
+              <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-8">
+                <p className="text-zinc-400">
+                  No WordPress posts found.
+                </p>
+              </div>
+            ) : (
+              <div className="grid gap-5 md:grid-cols-2">
+
+                {posts.map((post) => (
+                  <div
+                    key={post.ID}
+                    className="rounded-2xl border border-zinc-800 bg-zinc-900 p-6 transition hover:border-cyan-400/40"
+                  >
+
+                    <div className="mb-4">
+                      <p className="text-xs font-mono text-cyan-300">
+                        POST #{post.ID}
+                      </p>
+
+                      <h3 className="mt-2 text-xl font-bold">
+                        {post.title}
+                      </h3>
+                    </div>
+
+                    <p className="text-sm text-zinc-400">
+                      Published:{" "}
+                      {new Date(post.date).toLocaleDateString()}
+                    </p>
+
+                    <a
+                      href={post.URL}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="mt-5 inline-block text-sm text-cyan-300 hover:text-cyan-200"
+                    >
+                      View WordPress post →
+                    </a>
+
+                  </div>
+                ))}
+
+              </div>
+            )}
+
+          </div>
+        )}
+
       </div>
+
     </main>
   );
 }
