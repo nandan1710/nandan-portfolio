@@ -5,9 +5,10 @@ export async function GET() {
   const redirectUri = process.env.WORDPRESS_REDIRECT_URI;
 
   if (!clientId || !redirectUri) {
-    return new NextResponse("WordPress OAuth is not configured.", {
-      status: 500,
-    });
+    return new NextResponse(
+      "WordPress OAuth environment variables are missing.",
+      { status: 500 }
+    );
   }
 
   const params = new URLSearchParams({
@@ -15,7 +16,7 @@ export async function GET() {
     redirect_uri: redirectUri,
     response_type: "code",
     scope: "posts,media",
-    blog: "nandanportfolioin.wordpress.com",
+    blog: "257478587",
   });
 
   const authorizationUrl =
