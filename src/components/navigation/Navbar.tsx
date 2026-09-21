@@ -6,6 +6,7 @@ import { profile } from "@/data/profile";
 import { ThemeToggle } from "@/components/ui/ThemeToggle";
 import { FileText, Menu, X, Cpu } from "lucide-react";
 import { MobileMenu } from "./MobileMenu";
+import { AdminLoginModal } from "./AdminLoginModal";
 
 interface NavbarProps {
   onOpenResumeModal?: () => void;
@@ -25,6 +26,7 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResumeModal }) => {
   const [activeSection, setActiveSection] = useState("hero");
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [adminLoginOpen, setAdminLoginOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -62,23 +64,27 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResumeModal }) => {
       >
         <div className="container mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between">
           {/* Brand / Logo */}
-          <Link
-            href="#hero"
-            className="group flex items-center gap-2.5 focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan rounded-lg p-1"
-          >
-            <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-brand-cyan/40 bg-brand-cyan/10 text-brand-cyan font-tech font-bold text-base transition-transform duration-300 group-hover:scale-105 group-hover:border-brand-cyan group-hover:shadow-[0_0_12px_#aed9e0]">
-              <Cpu className="h-5 w-5 text-brand-cyan" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-tech font-bold text-sm tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-brand-cyan transition-colors">
-                NANDAN N N
-              </span>
-              <span className="text-[10px] font-mono text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Embedded Systems
-              </span>
-            </div>
-          </Link>
+          <button
+  type="button"
+  onClick={() => setAdminLoginOpen(true)}
+  aria-label="Open admin login"
+  className="group flex items-center gap-2.5 rounded-lg p-1 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-cyan"
+>
+  <div className="relative flex h-10 w-10 items-center justify-center rounded-xl border border-brand-cyan/40 bg-brand-cyan/10 text-brand-cyan font-tech font-bold text-base transition-all duration-300 group-hover:scale-105 group-hover:border-brand-cyan group-hover:shadow-[0_0_18px_#aed9e0]">
+    <Cpu className="h-5 w-5 text-brand-cyan transition-transform duration-300 group-hover:rotate-6" />
+  </div>
+
+  <div className="flex flex-col">
+    <span className="font-tech font-bold text-sm tracking-tight text-zinc-900 dark:text-zinc-100 group-hover:text-brand-cyan transition-colors">
+      NANDAN N N
+    </span>
+
+    <span className="text-[10px] font-mono text-zinc-600 dark:text-zinc-300 flex items-center gap-1.5">
+      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+      Embedded Systems
+    </span>
+  </div>
+</button>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden lg:flex items-center gap-1 rounded-full border border-zinc-300 dark:border-zinc-800/80 bg-zinc-100/60 dark:bg-[#181a1f]/70 px-4 py-1.5 backdrop-blur-md">
@@ -148,6 +154,10 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenResumeModal }) => {
         activeSection={activeSection}
         onOpenResumeModal={onOpenResumeModal}
       />
+      <AdminLoginModal
+  isOpen={adminLoginOpen}
+  onClose={() => setAdminLoginOpen(false)}
+/>
     </>
   );
 };
