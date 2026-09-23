@@ -5,15 +5,19 @@ export async function GET(request: NextRequest) {
   const error = request.nextUrl.searchParams.get("error");
 
   if (error) {
-    return new NextResponse(
-      `WordPress authorization failed: ${error}`,
+    return NextResponse.json(
+      {
+        error: `WordPress authorization failed: ${error}`,
+      },
       { status: 400 }
     );
   }
 
   if (!code) {
-    return new NextResponse(
-      "No authorization code received.",
+    return NextResponse.json(
+      {
+        error: "No authorization code received.",
+      },
       { status: 400 }
     );
   }
@@ -23,8 +27,10 @@ export async function GET(request: NextRequest) {
   const redirectUri = process.env.WORDPRESS_REDIRECT_URI;
 
   if (!clientId || !clientSecret || !redirectUri) {
-    return new NextResponse(
-      "WordPress OAuth environment variables are missing.",
+    return NextResponse.json(
+      {
+        error: "WordPress OAuth environment variables are missing.",
+      },
       { status: 500 }
     );
   }
@@ -33,9 +39,11 @@ export async function GET(request: NextRequest) {
     "https://public-api.wordpress.com/oauth2/token",
     {
       method: "POST",
+
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
+
       body: new URLSearchParams({
         client_id: clientId,
         client_secret: clientSecret,
@@ -48,19 +56,28 @@ export async function GET(request: NextRequest) {
 
   const tokenData = await tokenResponse.json();
 
-  if (!tokenResponse.ok || !tokenData.access_token) {
-    console.error("WordPress token exchange failed:", tokenData);
+  if (!tokenResponse.ok) {
+    console.error("WordPress token error:", tokenData);
 
-    return new NextResponse(
-      "Failed to obtain WordPress access token.",
+    return NextResponse.json(
+      {
+        error: "Failed to exchange authorization code.",
+        details: tokenData,
+      },
       { status: 500 }
     );
   }
 
-  // TEMPORARY:
-  // We will replace this with a secure session/cookie in the next step.
+  /*
+   * TEMPORARY TEST
+   *
+   * Do NOT display the actual token.
+   */
+  console.log("WordPress OAuth successful.");
+
   return NextResponse.json({
-    message: "WordPress connected successfully.",
-    access_token_received: true,
+    success: true,
+    message: "WordPress successfully connected.",
+    hasAccessToken: Boolean(tokenData.access_token),
   });
 }
