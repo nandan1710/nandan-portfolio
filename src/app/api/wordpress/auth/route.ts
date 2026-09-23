@@ -3,8 +3,9 @@ import { NextResponse } from "next/server";
 export async function GET() {
   const clientId = process.env.WORDPRESS_CLIENT_ID;
   const redirectUri = process.env.WORDPRESS_REDIRECT_URI;
+  const siteId = process.env.WORDPRESS_SITE_ID;
 
-  if (!clientId || !redirectUri) {
+  if (!clientId || !redirectUri || !siteId) {
     return new NextResponse(
       "WordPress OAuth environment variables are missing.",
       { status: 500 }
@@ -15,8 +16,8 @@ export async function GET() {
     client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
-    scope: "posts media",
-    blog: "257478587",
+    scope: "posts,media",
+    blog: siteId,
   });
 
   const authorizationUrl =
