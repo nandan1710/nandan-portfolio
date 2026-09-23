@@ -5,21 +5,62 @@ export async function GET(request: NextRequest) {
   const error = request.nextUrl.searchParams.get("error");
 
   if (error) {
-    return new NextResponse(`WordPress authorization failed: ${error}`, {
-      status: 400,
-    });
+    return new NextResponse(
+      `WordPress authorization failed: ${error}`,
+      { status: 400 }
+    );
   }
 
   if (!code) {
-    return new NextResponse("No authorization code received.", {
-      status: 400,
-    });
+    return new NextResponse(
+      "No authorization code received.",
+      { status: 400 }
+    );
   }
 
-  return new NextResponse(
-    `WordPress authorization successful. Code received.`,
+  const clientId = process.env.WORDPRESS_CLIENT_ID;
+  const clientSecret = process.env.WORDPRESS_CLIENT_SECRET;
+  const redirectUri = process.env.WORDPRESS_REDIRECT_URI;
+
+  if (!clientId || !clientSecret || !redirectUri) {
+    return new NextResponse(
+      "WordPress OAuth environment variables are missing.",
+      { status: 500 }
+    );
+  }
+
+  const tokenResponse = await fetch(
+    "https://public-api.wordpress.com/oauth2/token",
     {
-      status: 200,
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+      },
+      body: new URLSearchParams({
+        client_id: clientId,
+        client_secret: clientSecret,
+        code,
+        grant_type: "authorization_code",
+        redirect_uri: redirectUri,
+      }),
     }
   );
+
+  const tokenData = await tokenResponse.json();
+
+  if (!tokenResponse.ok || !tokenData.access_token) {
+    console.error("WordPress token exchange failed:", tokenData);
+
+    return new NextResponse(
+      "Failed to obtain WordPress access token.",
+      { status: 500 }
+    );
+  }
+
+  // TEMPORARY:
+  // We will replace this with a secure session/cookie in the next step.
+  return NextResponse.json({
+    message: "WordPress connected successfully.",
+    access_token_received: true,
+  });
 }
