@@ -15,7 +15,7 @@ export async function GET() {
     client_id: clientId,
     redirect_uri: redirectUri,
     response_type: "code",
-    scope: "posts,media",
+    scope: "posts media",
     blog: "257478587",
   });
 
