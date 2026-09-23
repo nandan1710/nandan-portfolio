@@ -116,14 +116,19 @@ export default function AdminDashboard() {
                       {new Date(post.date).toLocaleDateString()}
                     </p>
 
-                    <a
-                      href={post.URL}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="mt-5 inline-block text-sm text-cyan-300 hover:text-cyan-200"
-                    >
-                      View WordPress post →
-                    </a>
+                    <div className="mt-5 flex gap-3">
+  <button
+    className="rounded-lg bg-cyan-400 px-4 py-2 text-sm font-semibold text-black hover:bg-cyan-300"
+  >
+    Edit
+  </button>
+
+  <button
+    className="rounded-lg border border-red-500/40 px-4 py-2 text-sm text-red-400 hover:bg-red-500/10"
+  >
+    Delete
+  </button>
+</div>
 
                   </div>
                 ))}
