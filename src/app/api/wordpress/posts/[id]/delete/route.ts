@@ -1,30 +1,28 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { getWordPressAccessToken } from "@/lib/wordpress-auth";
 
+const WORDPRESS_SITE_ID =
+  process.env.WORDPRESS_SITE_ID || "257478587";
+
 export async function POST(
-  request: NextRequest,
-  context: {
-    params: {
-      id: string;
-    };
-  }
+  request: Request,
+  { params }: { params: { id: string } }
 ) {
   try {
-    const token = await getWordPressAccessToken();
+    const token = getWordPressAccessToken();
 
-    const postId = context.params.id;
-
-    const siteId = process.env.WORDPRESS_SITE_ID;
-
-    if (!siteId) {
+    if (!token) {
       return NextResponse.json(
-        { error: "WordPress site ID is missing." },
-        { status: 500 }
+        {
+          error:
+            "WordPress is not connected. Please authorize first.",
+        },
+        { status: 401 }
       );
     }
 
     const response = await fetch(
-      `https://public-api.wordpress.com/rest/v1.1/sites/${siteId}/posts/${postId}/delete/`,
+      `https://public-api.wordpress.com/rest/v1.1/sites/${WORDPRESS_SITE_ID}/posts/${params.id}/delete`,
       {
         method: "POST",
         headers: {
@@ -41,7 +39,8 @@ export async function POST(
       return NextResponse.json(
         {
           error:
-            data?.message ||
+            data.error ||
+            data.message ||
             "Failed to delete WordPress post.",
         },
         { status: response.status }
@@ -50,17 +49,14 @@ export async function POST(
 
     return NextResponse.json({
       success: true,
-      data,
+      post: data,
     });
   } catch (error) {
     console.error(error);
 
     return NextResponse.json(
       {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Delete failed.",
+        error: "Internal server error.",
       },
       { status: 500 }
     );
